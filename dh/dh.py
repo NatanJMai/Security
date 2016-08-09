@@ -6,7 +6,7 @@ mod = 11
 def start():
     pvt = int(sys.argv[1])
     dh1 = (bas ** pvt) % mod
-    print("A chave é %d" % dh1)
+    print("A chave pública é %d" % dh1)
     inp = int(input("> "))
     dh2 = (inp ** pvt) % mod
     print("-------------------")
