@@ -1,16 +1,15 @@
 import hashlib
-#import Crypto
 import ast
-from Crypto.PublicKey import RSA
-from Crypto           import Random
+from Crypto.PublicKey  import RSA
+from Crypto            import Random
 from Crypto.Hash       import SHA256
 
 
 def hash(file):
-    has = SHA256.new()
+    has = hashlib.sha256()
     buf = file.read()
+    has.update(buf.encode('latin-1'))
 
-    has.update(buf)
     return has.digest()
 
 def rsa(data):
@@ -20,21 +19,20 @@ def rsa(data):
     publicKey = key.publickey()
     encrypted = publicKey.encrypt(data.encode(), 32)
 
-    decrypted = key.decrypt(ast.literal_eval(str(encrypted)))
-    return (encrypted[0].decode(), publicKey.exportKey('PEM'))
-
-
+    return (encrypted[0].decode('latin-1'), publicKey.exportKey('PEM').decode('latin-1'))
 
 def put_file(file):
-    rs = rsa(hash(file))
-    #print(str(rs[0]))
-    file.write('-----BEGIN HASH-----\n')
-    file.write(str(rs[0]))
-    file.write('\n-----END HASH-----\n')
-    file.write(str(rs[1]))
+    f = open('encrypted.k', 'w')
+    h = hash(file)
+    file.seek(0)
+    r = rsa(h.decode('latin-1'))
+    f.write(file.read())
+    f.write('\nBEGIN Hash\n')
+    f.write(str(r[0]))
+    f.write('\nEND Hash\n')
+    f.write(str(r[1]) + '\n')
 
 
 if __name__ == '__main__':
-    f = open("file.in", 'r')
-    hash(f)
-    #put_file(f)
+    f = open("file.in", 'r+', encoding='latin-1')
+    put_file(f)

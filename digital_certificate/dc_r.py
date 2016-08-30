@@ -4,65 +4,66 @@ import ast
 from Crypto.PublicKey import RSA
 from Crypto           import Random
 
-f = open("file.in", 'rb+')
+f = open("encrypted.k", 'r')
 
 def hash(file):
+    f.seek(0)
+    text = ''
+    for i in f:
+        if ('BEGIN' in i) or ('END' in i):
+            break
+        text += i
+
     has = hashlib.sha256()
-    buf = file.read()
+    has.update(text[:-1].encode('latin-1'))
 
-    has.update(buf)
-    return has.hexdigest()
+    return has.digest()
 
-def rsa(data):
-    random_generator = Random.new().read
-    key = RSA.generate(1024, random_generator)
-
-    publicKey = key.publickey()
+def rsa(key, data):
+    publicKey = RSA.importKey(key)
     encrypted = publicKey.encrypt(data.encode(), 32)
-
-    decrypted = key.decrypt(ast.literal_eval(str(encrypted)))
-    return (encrypted[0], publicKey.exportKey('PEM'))
+    return encrypted[0]
 
 
 def get_public_key():
-    key = b''
-
+    key = ''
     for l in f:
-        if 'BEGIN HASH' in str(l):
+        if 'BEGIN PUBLIC KEY' in str(l):
+            key += str(l)
             break
 
     for l in f:
-        if 'END HASH' in l:
+        if 'END PUBLIC KEY' in str(l):
+            key += str(l)
             break
-        #print(l)
 
+        key += str(l)
+    return key
 
-
-    for line in reversed(f.readlines()):
-        if b'BEGIN PUBLIC KEY'     in line: break
-        elif not b'END PUBLIC KEY' in line: key += line.rstrip()
-
-
-    #print(key)
-
-    #f.seek(0)
-    #ks = f.read()
-    #print(ks)
-    #public_key = RSA.importKey(key)
-    #print(decrypted)
-    #return key
-
-
-def get_hash():
+def get_hash_c():
+    hah = ''
     f.seek(0)
-    #g = open("file.in", 'rb+')
-    #print(f.readlines())
+    for l in f:
+        if 'BEGIN Hash' in str(l):
+            break
 
+    for l in f:
+        if 'END Hash' in str(l):
+            break
+        hah += str(l)
+    return hah.encode('latin-1')[:-1]
 
 def get_file():
-    k = get_public_key()
-    get_hash()
+    key    = get_public_key()
+    hash_c = get_hash_c()
+    hah    = hash(f)
+    rs     = rsa(key, hah.decode('latin-1'))
 
+
+    if str(rs) == str(hash_c):
+        print("Assinatura válida")
+    else:
+        print("Assinatura inválida")
 
 
 if __name__ == '__main__':
