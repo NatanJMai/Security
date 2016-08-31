@@ -1,13 +1,22 @@
 from sys import argv
 
-fs   = open(argv[3], 'rb')
-fd   = open(argv[4], 'wb')
+fs_l = ['inputs/%s.input'  % str(x) for x in range(1, 8)]
+fd_l = ['outputs_natan/%s.output' % str(x) for x in range(1, 8)]
 key  = int(argv[1])
-data = fs.read()
+
+#fs   = open(argv[3], 'rb')
+#fd   = open(argv[4], 'wb')
+
+#data = fs.read()
 
 def encrypt():
-    fd.write(bytes((x + key) % 256 for x in data))
-    
+    for f in range(0, len(fs_l)):
+        fs   = open(fs_l[f], 'rb')
+        fd   = open(fd_l[f], 'wb')
+
+        data = fs.read()
+        fd.write(bytes((x + key) % 256 for x in data))
+
 def decrypt():
     fd.write(bytes((x - key) % 256 for x in data))
 
