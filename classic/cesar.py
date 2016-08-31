@@ -1,19 +1,17 @@
 from sys import argv
 
-fs_l = ['inputs/%s.input'  % str(x) for x in range(1, 8)]
-fd_l = ['outputs_natan/%s.output' % str(x) for x in range(1, 8)]
-key  = int(argv[1])
+def run():
+    fs_l = ['testcases/inputs/%s.input'  % str(x) for x in range(1, 8)]
+    fd_l = ['testcases/outputs_natan/%s.output' % str(x) for x in range(1, 8)]
+    key  = int(argv[1])
+    return (fs_l, fd_l, key)
 
 '''
 python3 cesar.py 17 -e && for i in 1 2 3 4 5 6 7; do diff outputs/$i.input.ceasar.17 outputs_natan/$i.output; done
 '''
 
-#fs   = open(argv[3], 'rb')
-#fd   = open(argv[4], 'wb')
-
-#data = fs.read()
-
 def encrypt():
+    fs_l, fd_l, key = run()
     for f in range(0, len(fs_l)):
         fs   = open(fs_l[f], 'rb')
         fd   = open(fd_l[f], 'wb')
@@ -22,11 +20,18 @@ def encrypt():
         fd.write(bytes((x + key) % 256 for x in data))
 
 def decrypt():
-    fd.write(bytes((x - key) % 256 for x in data))
+    fs_l, fd_l, key = run()
+    for f in range(0, len(fs_l)):
+        fs = open(fd_l[f], 'rb')
+        fd = open('testcases/outputs_natan/%d_decrypted.input' % (f + 1), 'w')
+
+        data = fs.read()
+        for x in data: fd.write(chr((x - key) % 256))
 
 if __name__ == '__main__':
-    if '-h' in argv:
-        print("Usage: python3 <cesar.py> <key> <option:-e/-d> <file_input> <file_output>")
+    if '-h' in argv or 'help' in argv:
+        print('python3 <cesar.py> <key> <option: -e/-d>')
+        print('Run it in the same path of testcases folder.')
 
     elif argv[2] == '-e':
         encrypt()
