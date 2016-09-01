@@ -2,7 +2,7 @@ from sys import argv
 
 def run():
     fs_l = ['testcases/inputs/%s.input'  % str(x) for x in range(1, 8)]
-    fd_l = ['testcases/outputs_natan/%s.output' % str(x) for x in range(1, 8)]
+    fd_l = ['testcases/outputs_natan/ceasar/%s_ceasar.output' % str(x) for x in range(1, 8)]
     key  = int(argv[1])
     return (fs_l, fd_l, key)
 
@@ -23,7 +23,7 @@ def decrypt():
     fs_l, fd_l, key = run()
     for f in range(0, len(fs_l)):
         fs = open(fd_l[f], 'rb')
-        fd = open('testcases/outputs_natan/%d_decrypted.input' % (f + 1), 'w')
+        fd = open('testcases/outputs_natan/ceasar/%d_decrypted.input' % (f + 1), 'w')
 
         data = fs.read()
         for x in data: fd.write(chr((x - key) % 256))
