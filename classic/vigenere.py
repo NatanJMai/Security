@@ -22,7 +22,19 @@ def encrypt():
 
 
 def decrypt():
-    pass
+    fs_l, fd_l, key = run()
+
+    for f in range(0, len(fs_l)):
+        fs     = open(fd_l[f], 'rb')
+        fd     = open('testcases/outputs_natan/vigenere/%d_decrypted.input' % (f + 1), 'wb')
+
+        data   = fs.read()
+        n_key  = ''
+        genr   = cycle(key)
+        for i in range(0, len(data)): n_key += genr.__next__()
+        fd.write(bytes((data[x] - ord(n_key[x])) % 256 for x in range(0, len(data))))
+
+    
 
 if __name__ == '__main__':
     if argv[1] == '-e':
