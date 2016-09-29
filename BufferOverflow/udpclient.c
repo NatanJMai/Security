@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
     //fgets(buf, BUFSIZE, stdin);
     strcpy(buf, "*******************************************************************************************************************************");
 
-    //0000000000400a27
+    //0000000000400a37 - Endereço função pvtot
     buf[strlen(buf)+1]  = 0x37;
     buf[strlen(buf)+2]  = 0x0a;
     buf[strlen(buf)+3]  = 0x40;
