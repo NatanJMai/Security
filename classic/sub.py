@@ -265,21 +265,35 @@ d_alph = {
     255:226
 }
 
-print(d_alph)
-
 def run():
     fs_l   = ['testcases/inputs/%s.input'  % str(x) for x in range(1, 8)]
     fd_l   = ['testcases/outputs_natan/sub/%s_sub.output' % str(x) for x in range(1, 8)]
-    pass
+    return(fs_l, fd_l)
+
 
 def encrypt():
-    run()
-    pass
+    fs_l, fd_l = run()
+
+    for f in range(0, len(fs_l)):
+        fs     = open(fs_l[f], 'rb')
+        fd     = open(fd_l[f], 'wb')
+        data   = fs.read()
+
+        n_data = bytes(d_alph[x] for x in data)
+        fd.write(n_data)
+
 
 def decrypt():
-    run()
-    pass
+    fs_l, fd_l = run()
+    n_alph     = {c: v for v, c in d_alph.items()}
 
+    for f in range(0, len(fs_l)):
+        fs     = open(fd_l[f], 'rb')
+        fd     = open('testcases/outputs_natan/sub/%d_decrypted.input' % (f + 1), 'wb')
+        data   = fs.read()
+
+        n_data = bytes(n_alph[x] for x in data)
+        fd.write(n_data)
 
 
 if __name__ == '__main__':
